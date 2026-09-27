@@ -1,7 +1,7 @@
 {
   "name": "@agentserver/dsh-session-persistence-pg",
   "description": "PostgreSQL durable session persistence backend for the DeepSeek Harness",
-  "version": "0.1.7-rc.2",
+  "version": "0.1.7-rc.3",
   "publishConfig": { "access": "public" },
   "repository": {
     "type": "git",

@@ -111,6 +111,20 @@ function isUniqueViolation(error: unknown): boolean {
   return isRecord(error) && error.code === '23505'
 }
 
+/**
+ * PostgreSQL jsonb rejects the JSON escape for U+0000 (\\u0000), even though
+ * JSON.stringify is allowed to emit it. Terminal events can contain NUL bytes,
+ * so remove them from persisted string values before sending the JSON to PG.
+ *
+ * This is intentionally limited to the persistence boundary: the in-memory
+ * dsh event remains unchanged, while the durable copy loses only U+0000.
+ */
+function stringifyEventForPostgres(event: SessionEvent): string {
+  return JSON.stringify(event, (_key, value: unknown) => (
+    typeof value === 'string' ? value.replace(/\u0000/g, '') : value
+  ))
+}
+
 /** PostgreSQL operations owned by one provider instance. */
 export class PgStore {
   private pool: pg.Pool | undefined
@@ -242,7 +256,7 @@ export class PgStore {
           await client.query(
             `INSERT INTO ${schema}.session_events (session_id, seq, event)
              VALUES ($1, $2, $3::jsonb)`,
-            [String(header.id), Number(event.seq), JSON.stringify(event)],
+            [String(header.id), Number(event.seq), stringifyEventForPostgres(event)],
           )
         }
         await client.query(

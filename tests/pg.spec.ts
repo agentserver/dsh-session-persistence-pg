@@ -3,6 +3,7 @@ import { spawn } from 'node:child_process'
 import { once } from 'node:events'
 import { fileURLToPath } from 'node:url'
 import SessionStore, { SessionId, SessionSeq } from '@deepseek-ai/dsh-session'
+import type { SessionEvent } from '@deepseek-ai/dsh-session'
 import PgSessionPersistence from '../src/index.ts'
 import { describe, expect, it } from 'vitest'
 import { runPersistenceContract, meta, oneTurnLog } from './contract.ts'
@@ -67,6 +68,33 @@ describe.skipIf(configuredConnectionString === undefined)('PostgreSQL SessionPer
       await reader.close()
     } finally {
       await secondFiber.dispose()
+    }
+  })
+
+  it('drops NUL characters before writing events to PostgreSQL jsonb', async () => {
+    const first = new Context()
+    await first.plugin(SessionStore)
+    const schema = `nul_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}`
+    const firstFiber = await first.plugin(PgSessionPersistence, { connectionString, schema })
+    const header = meta('pg-nul', '/work')
+    try {
+      const writer = await first.sessionPersistence.create(header)
+      const event = {
+        type: 'turn/start',
+        seq: SessionSeq(0),
+        time: 1,
+        data: { text: 'before\u0000after' },
+      } as unknown as SessionEvent
+      await writer.append([event])
+      await writer.close()
+
+      const reader = await first.sessionPersistence.open(header.id, 'read')
+      await expect(reader.read()).resolves.toMatchObject({
+        events: [{ data: { text: 'beforeafter' } }],
+      })
+      await reader.close()
+    } finally {
+      await firstFiber.dispose()
     }
   })
 
