@@ -1,0 +1,32 @@
+name: checks
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: dsh_test
+          POSTGRES_PASSWORD: dsh_test_local
+          POSTGRES_DB: dsh_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U dsh_test -d dsh_test"
+          --health-interval 2s --health-timeout 5s --health-retries 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm install
+      - run: npm run typecheck
+      - run: npm test
+        env:
+          DSH_PG_TEST_URL: postgresql://dsh_test:dsh_test_local@127.0.0.1:5432/dsh_test
