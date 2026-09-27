@@ -2,7 +2,7 @@ import { Context } from '@deepseek-ai/cordis'
 import { spawn } from 'node:child_process'
 import { once } from 'node:events'
 import { fileURLToPath } from 'node:url'
-import SessionStore, { SessionId, SESSION_FORMAT_VERSION } from '@deepseek-ai/dsh-session'
+import SessionStore, { SessionId, SessionSeq } from '@deepseek-ai/dsh-session'
 import PgSessionPersistence from '../src/index.ts'
 import { describe, expect, it } from 'vitest'
 import { runPersistenceContract, meta, oneTurnLog } from './contract.ts'
@@ -52,15 +52,9 @@ describe.skipIf(configuredConnectionString === undefined)('PostgreSQL SessionPer
     await first.plugin(SessionStore)
     const schema = `test_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}`
     const firstFiber = await first.plugin(PgSessionPersistence, { connectionString, schema })
-    const header = {
-      version: SESSION_FORMAT_VERSION,
-      id: SessionId('pg-round-trip'),
-      createdAt: 1,
-      cwd: '/work',
-      isSeeded: false,
-    }
+    const header = meta('pg-round-trip', '/work')
     const writer = await first.sessionPersistence.create(header)
-    await writer.append([{ type: 'turn/start', seq: 0, time: 1, data: { turn: 1 } }])
+    await writer.append([{ type: 'turn/start', seq: SessionSeq(0), time: 1, data: { turn: 1 } }])
     await writer.close()
     await firstFiber.dispose()
 

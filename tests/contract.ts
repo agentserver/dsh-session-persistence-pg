@@ -22,8 +22,8 @@ import {
   SessionHandleClosedError,
   SessionPersistenceNotFoundError,
   SessionReadOnlyError,
-} from '../src/index.ts'
-import type { SessionHandle, SessionPersistence } from '../src/index.ts'
+} from '@deepseek-ai/dsh-session-persistence'
+import type { SessionHandle, SessionPersistence } from '@deepseek-ai/dsh-session-persistence'
 
 /** One backend service instance under test plus its teardown. */
 interface ContractBackendInstance {
@@ -115,7 +115,7 @@ export function releasedV1OneTurnLog(): SessionEvent[] {
       turn: message.data.turn,
       step: message.data.step,
       message: message.data.message,
-    }, sourceEventSeqs: [SessionSeq(3), SessionSeq(4), SessionSeq(5), SessionSeq(6)] } as SessionEvent,
+    }, sourceEventSeqs: [SessionSeq(3), SessionSeq(4), SessionSeq(5), SessionSeq(6)] } as unknown as SessionEvent,
     { ...(current[4] as SessionEvent), seq: SessionSeq(8) },
     { ...(current[5] as SessionEvent), seq: SessionSeq(9) },
   ]

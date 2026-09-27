@@ -14,7 +14,7 @@ import { describe, expect, it, vi } from 'vitest'
 import type { Context } from '@deepseek-ai/cordis'
 import { SessionId } from '@deepseek-ai/dsh-session'
 import type { SessionEvent } from '@deepseek-ai/dsh-session'
-import type { SessionPersistence } from '../src/index.ts'
+import type { SessionPersistence } from '@deepseek-ai/dsh-session-persistence'
 
 /** One mounted backend under a session store, plus same-storage remount support. */
 export interface LiveWriteBackend {
