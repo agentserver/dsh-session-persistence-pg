@@ -44,4 +44,4 @@ jobs:
         env:
           TAG_VERSION: ${{ github.ref_name }}
         run: node -e "const expected = process.env.TAG_VERSION.replace(/^v/, ''); const actual = require('./package.json').version; if (expected !== actual) throw new Error('tag ' + expected + ' does not match package version ' + actual)"
-      - run: npm publish --access public
+      - run: npm publish --access public --tag next
