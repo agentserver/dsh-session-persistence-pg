@@ -3,7 +3,7 @@ description: "PostgreSQL backend for the handle-based SessionPersistence service
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-session-persistence-pg
+# @agentserver/dsh-session-persistence-pg
 
 English | [中文](README.zh.md)
 
@@ -19,7 +19,7 @@ Mount the package beside `@deepseek-ai/dsh-session` and configure a PostgreSQL c
 
 ```yaml
 - id: session-persistence-pg
-  name: '@deepseek-ai/dsh-session-persistence-pg'
+  name: '@agentserver/dsh-session-persistence-pg'
   config:
     connectionString: !!js process.env.DSH_PG_URL
     schema: dsh

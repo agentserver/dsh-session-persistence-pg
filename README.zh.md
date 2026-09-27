@@ -3,7 +3,7 @@ description: "基于 PostgreSQL 的 handle-based SessionPersistence 后端。"
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-session-persistence-pg
+# @agentserver/dsh-session-persistence-pg
 
 [English](README.md) | 中文
 
@@ -19,7 +19,7 @@ kind: "package-reference"
 
 ```yaml
 - id: session-persistence-pg
-  name: '@deepseek-ai/dsh-session-persistence-pg'
+  name: '@agentserver/dsh-session-persistence-pg'
   config:
     connectionString: !!js process.env.DSH_PG_URL
     schema: dsh

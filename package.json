@@ -1,5 +1,5 @@
 {
-  "name": "@deepseek-ai/dsh-session-persistence-pg",
+  "name": "@agentserver/dsh-session-persistence-pg",
   "description": "PostgreSQL durable session persistence backend for the DeepSeek Harness",
   "version": "0.1.7-rc.2",
   "publishConfig": { "access": "public" },
